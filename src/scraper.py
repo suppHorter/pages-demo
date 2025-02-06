@@ -30,7 +30,7 @@ def generateValue(start, end):
 
 values = []
 for i in range(DAYS_AMOUNT):
-  date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d')
+  date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d %H:%M:%S')
 
   for priority in range(1, 4):
     values.append({

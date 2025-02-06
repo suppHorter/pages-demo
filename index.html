@@ -60,7 +60,7 @@
         width: 1200,
         height: 400
       },
-      // groupKeys: ['priority'],
+      groupKeys: ['priority'],
       filter: (data) => {
         data = data.filter((d) => d.historic === true);
         data.sort((a, b) => new Date(a.date) - new Date(b.date));
