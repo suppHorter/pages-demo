@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,15 +9,62 @@
   <script src="src/js/graph/timeline.js"></script>
 </head>
 <body>
-  <h1>Prio: 1 - Historie</h1>
-  <svg id="diagram-burndown"></svg>
+  <h2>Priority</h2>
+  <div style="display: flex;">
+    <h2>1</h2>
+    <svg id="diagram-prio1"></svg>
+    <h2>2</h2>
+    <svg id="diagram-prio2"></svg>
+    <h2>3</h2>
+    <svg id="diagram-prio3"></svg>
+  </div>
+  <div>
+    <h2>History</h2>
+    <svg id="diagram-history"></svg>
+  </div>
 
   <script>
     new TimelineGraph({
-      svgId: 'diagram-burndown',
+      svgId: 'diagram-prio1',
+      filter: (data) => {
+        data = data.filter((d) => d.priority === 1);
+        data = data.filter((d) => d.historic === false);
+        data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        return data;
+      },
+    }).init();
+
+    new TimelineGraph({
+      svgId: 'diagram-prio2',
+      filter: (data) => {
+        data = data.filter((d) => d.priority === 2);
+        data = data.filter((d) => d.historic === false);
+        data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        return data;
+      },
+    }).init();
+
+    new TimelineGraph({
+      svgId: 'diagram-prio3',
+      filter: (data) => {
+        data = data.filter((d) => d.priority === 3);
+        data = data.filter((d) => d.historic === false);
+        data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        return data;
+      },
+    }).init();
+
+    new TimelineGraph({
+      svgId: 'diagram-history',
       dimensions: {
-        width: 600,
+        width: 1200,
         height: 400
+      },
+      // groupKeys: ['priority'],
+      filter: (data) => {
+        data = data.filter((d) => d.historic === true);
+        data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        return data;
       },
     }).init();
   </script>

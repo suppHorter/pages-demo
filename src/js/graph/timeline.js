@@ -1,10 +1,12 @@
 class TimelineGraph extends Graph {
+  #dateFormat = "%d.%m.%Y";
   constructor(config) {
     super(config);
   }
 
   init() {
     super.init((context, data) => {
+      const formatDate = d3.timeFormat(this.#dateFormat);
       let height = this.getHeight();
       let width = this.getWidth();
 
@@ -39,27 +41,23 @@ class TimelineGraph extends Graph {
         .attr("cx", d => xAxis(new Date(d.date)))
         .attr("cy", d => yAxis(d.value))
         .attr("r", 3)
-        .style("fill", "red")
+        .style("fill", "lightblue")
         .on("mouseover", function(event, d) {
           d3.select(this).transition().duration(100).attr("r", 6);
           context.append("text")
             .attr("class", "tooltip-date")
-            .attr("x", width)
-            .attr("y", 20)
-            .text(d.date)
-            .style("font-size", "24px")
+            .attr("x", 10)
+            .attr("y", height - 15)
+            .text(formatDate(new Date(d.date)))
+            .style("font-size", "20px")
             .style("font-weight", "bold")
-            .style("background", "white")
-            .style("fill", "black");
           context.append("text")
             .attr("class", "tooltip-value")
-            .attr("x", width)
-            .attr("y", 0)
+            .attr("x", 10)
+            .attr("y", height - 35)
             .text(d.value)
             .style("font-size", "24px")
             .style("font-weight", "bold")
-            .style("background", "white")
-            .style("fill", "black");
         })
         .on("mouseout", function(event, d) {
           d3.select(this).transition().duration(100).attr("r", 3);
@@ -67,5 +65,6 @@ class TimelineGraph extends Graph {
           context.select(".tooltip-value").remove();
         });
     });
+    return this;
   }
 }

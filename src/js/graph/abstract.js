@@ -4,7 +4,9 @@ class Graph {
   #context;
   #svgId;
   #dataUrl;
+  #groupKeys;
   #margin = { top: 20, right: 30, bottom: 40, left: 40 };
+  #filter;
 
   constructor(config) {
     if (!config.svgId) {
@@ -18,6 +20,14 @@ class Graph {
       dataUrl = config.dataUrl;
     }
     this.#dataUrl = dataUrl;
+
+    if (config.filter) {
+      this.#filter = config.filter;
+    }
+
+    if (config.groupKeys) {
+      this.#groupKeys = config.groupKeys;
+    }
 
     if (config.dimensions) {
       if (config.dimensions.width) {
@@ -39,8 +49,14 @@ class Graph {
       .append("g")
       .attr("transform", `translate(${this.#margin.left},${this.#margin.top})`);
 
+    // let groupKeys = this.#groupKeys;
     d3.json(this.#dataUrl).then(data => {
-      data.sort((a, b) => new Date(a.date) - new Date(b.date));
+      if (this.#filter) {
+        data = this.#filter(data);
+      }
+      // if (groupKeys) {
+      //   data = d3.group(data, d => d[groupKeys[0]])
+      // }
       callback(this.#context, data);
     }).catch(error => {
       console.error('Error fetching the data:', error);
@@ -66,5 +82,9 @@ class Graph {
 
   getContext() {
     return this.#context;
+  }
+
+  getGroupKeys() {
+    return this.#groupKeys;
   }
 }
