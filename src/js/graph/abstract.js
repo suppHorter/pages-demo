@@ -1,12 +1,12 @@
 class Graph {
-  #width = 600;
-  #height = 400;
   #context;
   #svgId;
-  #dataUrl;
+  #dataUrl = 'output.json';
   #groupKeys;
-  #margin = { top: 20, right: 30, bottom: 40, left: 40 };
   #filter;
+  #width = 600;
+  #height = 400;
+  #margin = { top: 20, right: 30, bottom: 40, left: 40 };
 
   constructor(config) {
     if (!config.svgId) {
@@ -15,11 +15,9 @@ class Graph {
     }
     this.#svgId = config.svgId;
 
-    let dataUrl = "output.json";
     if (config.dataUrl) {
-      dataUrl = config.dataUrl;
+      this.#dataUrl = config.dataUrl;
     }
-    this.#dataUrl = dataUrl;
 
     if (config.filter) {
       this.#filter = config.filter;
@@ -44,19 +42,16 @@ class Graph {
     this.#height = this.#height - this.#margin.top - this.#margin.bottom;
 
     this.#context = d3.select(`#${this.#svgId}`)
-      .attr("width", this.#width + this.#margin.left + this.#margin.right)
-      .attr("height", this.#height + this.#margin.top + this.#margin.bottom)
-      .append("g")
-      .attr("transform", `translate(${this.#margin.left},${this.#margin.top})`);
+      .attr('width', this.#width + this.#margin.left + this.#margin.right)
+      .attr('height', this.#height + this.#margin.top + this.#margin.bottom)
+      .append('g')
+      .attr('transform', `translate(${this.#margin.left},${this.#margin.top})`);
 
-    // let groupKeys = this.#groupKeys;
     d3.json(this.#dataUrl).then(data => {
       if (this.#filter) {
         data = this.#filter(data);
       }
-      // if (groupKeys) {
-      //   data = d3.group(data, d => d[groupKeys[0]])
-      // }
+      data.sort((a, b) => new Date(a.date) - new Date(b.date));
       callback(this.#context, data);
     }).catch(error => {
       console.error('Error fetching the data:', error);
@@ -64,11 +59,11 @@ class Graph {
   }
 
   drawAxis(xAxis, yAxis) {
-    this.#context.append("g")
-      .attr("transform", `translate(0,${this.#height})`)
+    this.#context.append('g')
+      .attr('transform', `translate(0,${this.#height})`)
       .call(d3.axisBottom(xAxis));
 
-    this.#context.append("g")
+    this.#context.append('g')
       .call(d3.axisLeft(yAxis));
   }
 

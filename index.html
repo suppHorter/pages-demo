@@ -29,7 +29,6 @@
       filter: (data) => {
         data = data.filter((d) => d.priority === 1);
         data = data.filter((d) => d.historic === false);
-        data.sort((a, b) => new Date(a.date) - new Date(b.date));
         return data;
       },
     }).init();
@@ -39,7 +38,6 @@
       filter: (data) => {
         data = data.filter((d) => d.priority === 2);
         data = data.filter((d) => d.historic === false);
-        data.sort((a, b) => new Date(a.date) - new Date(b.date));
         return data;
       },
     }).init();
@@ -49,7 +47,6 @@
       filter: (data) => {
         data = data.filter((d) => d.priority === 3);
         data = data.filter((d) => d.historic === false);
-        data.sort((a, b) => new Date(a.date) - new Date(b.date));
         return data;
       },
     }).init();
