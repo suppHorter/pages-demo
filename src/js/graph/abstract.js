@@ -58,10 +58,13 @@ class Graph {
     });
   }
 
-  drawAxis(xAxis, yAxis) {
+  drawAxis(xAxis, yAxis, tick=d3.timeMonth.every(1), tickFormat='%b %Y') {
     this.#context.append('g')
       .attr('transform', `translate(0,${this.#height})`)
-      .call(d3.axisBottom(xAxis));
+      .call(d3.axisBottom(xAxis)
+        .ticks(tick)
+        .tickFormat(d3.timeFormat(tickFormat))
+      );
 
     this.#context.append('g')
       .call(d3.axisLeft(yAxis));
