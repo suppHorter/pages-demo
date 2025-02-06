@@ -36,7 +36,8 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Create Random Data
-        run: echo "todo: save to data.json"
+        run: |
+          echo "todo: save to data.json"
         shell: bash
 
       - name: Upload artifact
