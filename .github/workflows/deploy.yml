@@ -34,16 +34,23 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
       - name: Create Random Data
         run: |
-          echo "todo: save to data.json"
+          python3 -m venv venv
+          source venv/bin/activate
+          # pip install -r requirements.txt
+          python3 src/scraper.py ${{ github.workspace }}/output.json
         shell: bash
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
           path: '.'
       
       - name: Deploy to GitHub Pages
