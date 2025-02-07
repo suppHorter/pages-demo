@@ -4,66 +4,58 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>pages-demo</title>
-  <script src="src/js/lib/d3.v6.min.js"></script>
-  <script src="src/js/graph/abstract.js"></script>
-  <script src="src/js/graph/timeline.js"></script>
+  <script src="src/js/lib/chart.4.4.7.js"></script>
+  <script src="src/js/chart/abstract.js"></script>
+  <script src="src/js/chart/line.js"></script>
 </head>
 <body>
   <h2>Priority</h2>
   <div style="display: flex;">
     <h2>1</h2>
-    <svg id="diagram-prio1"></svg>
-    <h2>2</h2>
-    <svg id="diagram-prio2"></svg>
+    <canvas id="chart-prio1" width="400" height="200"></canvas>
+    <!-- <h2>2</h2>
+    <canvas id="chart-prio2"></canvas>
     <h2>3</h2>
-    <svg id="diagram-prio3"></svg>
+    <canvas id="chart-prio3"></canvas> -->
   </div>
-  <div>
+  <!-- <div>
     <h2>History</h2>
-    <svg id="diagram-history"></svg>
-  </div>
+    <canvas id="chart-history"></canvas>
+  </div> -->
 
   <script>
-    new TimelineGraph({
-      svgId: 'diagram-prio1',
-      filter: (data) => {
+    new LineChart('chart-prio1')
+      .setFilterMethod((data) => {
         data = data.filter((d) => d.priority === 1);
         data = data.filter((d) => d.historic === false);
         return data;
-      },
-    }).init();
+      })
+      .init();
 
-    new TimelineGraph({
-      svgId: 'diagram-prio2',
-      filter: (data) => {
-        data = data.filter((d) => d.priority === 2);
-        data = data.filter((d) => d.historic === false);
-        return data;
-      },
-    }).init();
+    // new LineChart('chart-prio2')
+    //   .setFilterMethod((data) => {
+    //     data = data.filter((d) => d.priority === 2);
+    //     data = data.filter((d) => d.historic === false);
+    //     return data;
+    //   })
+    //   .init();
 
-    new TimelineGraph({
-      svgId: 'diagram-prio3',
-      filter: (data) => {
-        data = data.filter((d) => d.priority === 3);
-        data = data.filter((d) => d.historic === false);
-        return data;
-      },
-    }).init();
+    // new LineChart('chart-prio3')
+    //   .setFilterMethod((data) => {
+    //     data = data.filter((d) => d.priority === 3);
+    //     data = data.filter((d) => d.historic === false);
+    //     return data;
+    //   })
+    //   .init();
 
-    new TimelineGraph({
-      svgId: 'diagram-history',
-      dimensions: {
-        width: 1200,
-        height: 400
-      },
-      groupKeys: ['priority'],
-      filter: (data) => {
-        data = data.filter((d) => d.historic === true);
-        data.sort((a, b) => new Date(a.date) - new Date(b.date));
-        return data;
-      },
-    }).init();
+    // new LineChart('chart-history')
+    // .setFilterMethod((data) => {
+    //     data = data.filter((d) => d.historic === true);
+    //     data.sort((a, b) => new Date(a.date) - new Date(b.date));
+    //     return data;
+    //   })
+    //   .groupBy(['priority'])
+    //   .init();
   </script>
 </body>
 </html>
