@@ -1,53 +1,59 @@
 class AbstractChart {
+  #dataUrl = DEFAULT_DATA_URL;
   #canvasContext;
   #chart;
-  #chartConfig;
+  #config;
   #filterMethod;
   #groupKeys;
-  #dataUrl = 'data/output.json';
+  #canvasId;
 
-  constructor(elementId) {
-    // Chart.defaults.global.defaultFontColor = 'black';
-    // Chart.defaults.global.defaultFontSize = 15;
-
-    if (!elementId) {
-      throw new Error('elementId is required');
+  constructor(canvasId) {
+    if (!canvasId) {
+      throw new Error('config is required');
     }
-    this.#canvasContext = document.getElementById(elementId).getContext('2d');
+    this.#canvasId = canvasId;
+    this.#canvasContext = document.getElementById(this.#canvasId).getContext('2d');
   }
 
   init(callback) {
-    if (!this.#chart) {
-      this.#chart = new Chart(this.#canvasContext, this.#chartConfig);
+    if (!this.#config) {
+      throw new Error(`No config set for chart ${this.#canvasId}`);
     }
+    this.#chart = new Chart(this.#canvasContext, this.#config);
 
-    fetch(this.#dataUrl).then(data => {
+    fetch(this.#dataUrl)
+      .then(data => {
+        return data.json();
+      }).then(data => {
+        data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      data = data.json();
-      data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        if (this.#filterMethod) {
+          data = this.#filterMethod(data);
+        }
 
-      if (this.#filterMethod) {
-        data = this.#filterMethod(data);
-      }
+        if (this.#groupKeys) {
+          data = data.reduce((_data, item) => {
+            const key = this.#groupKeys.map(k => item[k]).join('-');
+            if (!_data[key]) {
+              _data[key] = [];
+            }
+            _data[key].push(item);
+            return _data;
+          }, {});
+        }
 
-      if (this.#groupKeys) {
-        data = data.reduce((_data, item) => {
-          const key = this.#groupKeys.map(k => item[k]).join('-');
-          if (!_data[key]) {
-            _data[key] = [];
-          }
-          _data[key].push(item);
-          return _data;
-        }, {});
-      }
-
-      callback(data);
-    }).catch(error => {
-      console.error('Error fetching the data:', error);
-    });
+        callback(data);
+      }).catch(error => {
+        console.error('Error fetching the data:', error);
+      });
   }
 
-  update(dataset) {
+  setConfig(config) {
+    this.#config = config;
+    return this;
+  }
+
+  updateData(dataset) {
     this.#chart.data = dataset;
     this.#chart.update();
   }
@@ -62,9 +68,13 @@ class AbstractChart {
     return this;
   }
 
-  setChartConfig(chartConfig) {
-    this.#chartConfig = chartConfig;
+  setConfig(config) {
+    this.#config = config;
     return this;
+  }
+
+  getGroupKeys() {
+    return this.#groupKeys;
   }
 
   groupBy(keys) {
