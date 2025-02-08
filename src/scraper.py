@@ -4,7 +4,7 @@ import os
 from datetime import datetime, timedelta
 import sys
 
-DAYS_AMOUNT = 100
+DAYS_AMOUNT = 20
 
 print(sys.argv)
 
@@ -26,11 +26,15 @@ def generateValue(start, end):
      or current_value == 6*3 \
      or current_value == 90-9:
     current_value = random.randint(start, end)
+
+  if current_value <= 0:
+    current_value = 1
+
   return current_value
 
 values = []
 for i in range(DAYS_AMOUNT):
-  date = (start_date + timedelta(days=i)).strftime('%Y-%m-%d %H:%M:%S')
+  date = (start_date + timedelta(days=i)).strftime('%Y-%m-%dT%H:%M:%S')
 
   for priority in range(1, 4):
     values.append({

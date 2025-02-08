@@ -55,7 +55,7 @@ class LineChart extends AbstractChart {
   }
 
   #drawGrouped(data) {
-    const xAxisLabels = data[Object.keys(data)[0]].map(d => new Date(d.date).getTime());
+    const xAxisLabels = data[Object.keys(data)[0]].map(d => new Date(d.date));
     let datasets = [];
 
     Object.keys(data).forEach(group => {
@@ -74,7 +74,7 @@ class LineChart extends AbstractChart {
   }
 
   #draw(data) {
-    const xAxisLabels = data.map(d => new Date(d.date).getTime());
+    const xAxisLabels = data.map(d => new Date(d.date));
     const values = data.map(d => d.value);
 
     super.updateData({

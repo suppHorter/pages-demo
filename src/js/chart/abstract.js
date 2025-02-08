@@ -25,7 +25,7 @@ class AbstractChart {
       .then(data => {
         return data.json();
       }).then(data => {
-        data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        // data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         if (this.#filterMethod) {
           data = this.#filterMethod(data);
