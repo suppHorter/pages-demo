@@ -6,6 +6,13 @@ class AbstractTimeChart {
   #filterMethod;
   #groupKey;
   #canvasId;
+  #colors = [
+    'rgb(75, 192, 192)',
+    'rgb(153, 102, 255)',
+    'rgb(54, 162, 235)',
+    'rgb(255, 159, 64)',
+    'rgb(255, 99, 132)'
+  ]
 
   constructor(canvasId) {
     if (!canvasId) {
@@ -50,6 +57,14 @@ class AbstractTimeChart {
       }).catch(error => {
         console.error('Error fetching the data:', error);
       });
+  }
+
+  getRandomColor() {
+    const result = this.#colors.pop()
+    if (!result) {
+      return 'rgb(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ')';
+    }
+    return result;
   }
 
   normalizeKeys(data) {

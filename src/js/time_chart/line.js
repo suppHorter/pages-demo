@@ -1,11 +1,4 @@
 class LineTimeChart extends AbstractTimeChart {
-  #colors = [
-    'rgb(54, 162, 235)',
-    'rgb(255, 206, 86)',
-    'rgb(75, 192, 192)',
-    'rgb(153, 102, 255)',
-    'rgb(255, 159, 64)',
-  ]
   constructor(elementId, title = '') {
     super(elementId).setConfig(
       {
@@ -51,14 +44,6 @@ class LineTimeChart extends AbstractTimeChart {
     });
   }
 
-  #getRandomColor() {
-    const result = this.#colors.pop()
-    if (!result) {
-      return 'rgb(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ')';
-    }
-    return result;
-  }
-
   #drawGrouped(data) {
     let datasets = [];
 
@@ -67,7 +52,7 @@ class LineTimeChart extends AbstractTimeChart {
         label: group,
         tension: 0.2,
         data: super.normalizeKeys(data[group]),
-        borderColor: this.#getRandomColor(),
+        borderColor: super.getRandomColor(),
         backgroundColor: 'white',
       });
     });
