@@ -1,15 +1,15 @@
-class AbstractChart {
+class AbstractTimeChart {
   #dataUrl = DEFAULT_DATA_URL;
   #canvasContext;
   #chart;
   #config;
   #filterMethod;
-  #groupKeys;
+  #groupKey;
   #canvasId;
 
   constructor(canvasId) {
     if (!canvasId) {
-      throw new Error('config is required');
+      throw new Error('canvasId is required');
     }
     this.#canvasId = canvasId;
     this.#canvasContext = document.getElementById(this.#canvasId).getContext('2d');
@@ -25,15 +25,19 @@ class AbstractChart {
       .then(data => {
         return data.json();
       }).then(data => {
-        // data.sort((a, b) => new Date(a.date) - new Date(b.date));
+        data.sort((a, b) => new Date(a.date) - new Date(b.date));
 
         if (this.#filterMethod) {
           data = this.#filterMethod(data);
         }
 
-        if (this.#groupKeys) {
+        let xAxisLabels = data.map((item) => item.date);
+        xAxisLabels = xAxisLabels.filter((item, index) => xAxisLabels.indexOf(item) === index);
+        this.#chart.data.labels = xAxisLabels;
+
+        if (this.#groupKey) {
           data = data.reduce((_data, item) => {
-            const key = this.#groupKeys.map(k => item[k]).join('-');
+            const key = item[this.#groupKey];
             if (!_data[key]) {
               _data[key] = [];
             }
@@ -48,13 +52,22 @@ class AbstractChart {
       });
   }
 
+  normalizeKeys(data) {
+    return data.map((item) => {
+      return {
+        x: item.date,
+        y: item.value
+      };
+    });
+  }
+
   setConfig(config) {
     this.#config = config;
     return this;
   }
 
-  updateData(dataset) {
-    this.#chart.data = dataset;
+  updateDataSet(datasets) {
+    this.#chart.data.datasets = datasets;
     this.#chart.update();
   }
 
@@ -73,12 +86,12 @@ class AbstractChart {
     return this;
   }
 
-  getGroupKeys() {
-    return this.#groupKeys;
+  getGroupKey() {
+    return this.#groupKey;
   }
 
-  groupBy(keys) {
-    this.#groupKeys = keys;
+  groupBy(key) {
+    this.#groupKey = key;
     return this;
   }
 }

@@ -1,4 +1,4 @@
-class LineChart extends AbstractChart {
+class LineTimeChart extends AbstractTimeChart {
   #colors = [
     'rgb(54, 162, 235)',
     'rgb(255, 206, 86)',
@@ -6,7 +6,7 @@ class LineChart extends AbstractChart {
     'rgb(153, 102, 255)',
     'rgb(255, 159, 64)',
   ]
-  constructor(elementId, title='') {
+  constructor(elementId, title = '') {
     super(elementId).setConfig(
       {
         type: 'line',
@@ -20,6 +20,9 @@ class LineChart extends AbstractChart {
             legend: {
               position: 'bottom',
             }
+          },
+          ticks: {
+            source: 'data',
           },
           scales: {
             x: {
@@ -37,8 +40,7 @@ class LineChart extends AbstractChart {
 
   init() {
     super.init((data) => {
-      const groupedKeys = super.getGroupKeys();
-      if (groupedKeys && groupedKeys.length > 0) {
+      if (super.getGroupKey()) {
         this.#drawGrouped(data);
         return;
       }
@@ -55,38 +57,30 @@ class LineChart extends AbstractChart {
   }
 
   #drawGrouped(data) {
-    const xAxisLabels = data[Object.keys(data)[0]].map(d => new Date(d.date));
     let datasets = [];
 
     Object.keys(data).forEach(group => {
       datasets.push({
         label: group,
-        data: data[group].map(d => d.value),
+        data: super.normalizeKeys(data[group]),
         borderColor: this.#getRandomColor(),
         backgroundColor: 'white',
       });
     });
 
-    super.updateData({
-      labels: xAxisLabels,
-      datasets: datasets,
-    });
+    super.updateDataSet(datasets);
   }
 
   #draw(data) {
-    const xAxisLabels = data.map(d => new Date(d.date));
-    const values = data.map(d => d.value);
+    const values = super.normalizeKeys(data);
 
-    super.updateData({
-      labels: xAxisLabels,
-      datasets: [
-        {
-          label: 'Amount',
-          data: values,
-          borderColor: 'rgb(75, 192, 192)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        },
-      ],
-    });
+    super.updateDataSet([
+      {
+        label: 'Amount',
+        data: values,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      },
+    ]);
   }
 }

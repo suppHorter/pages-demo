@@ -1,18 +1,19 @@
 const DEFAULT_DATA_URL = 'data/output.json';
 
-new LineChart('chart-prio', 'Prioritäten über Zeit')
+
+new LineTimeChart('chart-prio', 'Prioritäten über Zeit')
   .setFilterMethod((data) => {
     data = data.filter((d) => d.historic === false);
     return data;
   })
-  .groupBy(['priority'])
+  .groupBy('priority')
   .init();
 
 
-new LineChart('chart-history', 'Historie')
+new LineTimeChart('chart-history', 'Historie')
   .setFilterMethod((data) => {
     data = data.filter((d) => d.historic === true);
     return data;
   })
-  .groupBy(['priority'])
+  .groupBy('priority')
   .init();
