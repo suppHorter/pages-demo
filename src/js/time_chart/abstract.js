@@ -71,7 +71,7 @@ class AbstractTimeChart {
     this.#chart.update();
   }
 
-  setDataUrl(dataUrl) {
+  setDataPath(dataUrl) {
     this.#dataUrl = dataUrl;
     return this;
   }
