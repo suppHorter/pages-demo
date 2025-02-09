@@ -66,6 +66,12 @@ jobs:
           python3 src/scraper.py ${{ github.workspace }}/data $AMOUNT
         shell: bash
 
+      - name: cleanup artifact
+        run: |
+          rm -rf ${{ github.workspace }}/venv
+          rm -rf ${{ github.workspace }}/.devcontainer
+        shell: bash
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
