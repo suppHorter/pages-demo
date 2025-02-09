@@ -4,9 +4,8 @@ import os
 from datetime import datetime, timedelta
 import sys
 
-DAYS_AMOUNT = 20
-
-print(sys.argv)
+DAYS_AMOUNT = 1
+existing_values = []
 
 if len(sys.argv) > 1:
   output_dir = sys.argv[1]
@@ -17,7 +16,18 @@ if len(sys.argv) > 2:
 if not output_dir:
   raise ValueError('No output directory provided')
 
+os.makedirs(output_dir, exist_ok=True)
+output_path = os.path.join(output_dir, 'output.json')
+
+if os.path.exists(output_path):
+  with open(output_path, 'r') as f:
+    existing_values = json.load(f)
+
 start_date = datetime.now() - timedelta(days=DAYS_AMOUNT)
+
+if len(existing_values) > 0:
+  start_date = datetime.strptime(existing_values[-1]['date'], '%Y-%m-%dT%H:%M:%S')
+  start_date = start_date + timedelta(days=1)
 
 def generateValue(start, end):
   current_value = None
@@ -44,8 +54,7 @@ for i in range(DAYS_AMOUNT):
       "historic": (i < DAYS_AMOUNT/3 and random.choice([True, False]))
     })
 
-os.makedirs(output_dir, exist_ok=True)
+existing_values.extend(values)
 
-output_path = os.path.join(output_dir, 'output.json')
 with open(output_path, 'w') as f:
-  json.dump(values, f, separators=(',', ':'))
+  json.dump(existing_values, f, separators=(',', ':'))
