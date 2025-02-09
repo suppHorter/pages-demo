@@ -11,6 +11,9 @@ class LineTimeChart extends AbstractTimeChart {
       {
         type: 'line',
         options: {
+          pointStyle: 'crossRot',
+          hitRadius: 10,
+          radius: 5,
           responsive: false,
           plugins: {
             title: {
@@ -62,6 +65,7 @@ class LineTimeChart extends AbstractTimeChart {
     Object.keys(data).forEach(group => {
       datasets.push({
         label: group,
+        tension: 0.2,
         data: super.normalizeKeys(data[group]),
         borderColor: this.#getRandomColor(),
         backgroundColor: 'white',
@@ -78,6 +82,7 @@ class LineTimeChart extends AbstractTimeChart {
       {
         label: 'Amount',
         data: values,
+        tension: 0.2,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
       },
