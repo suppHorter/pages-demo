@@ -47,11 +47,16 @@ for i in range(DAYS_AMOUNT):
   date = (start_date + timedelta(days=i)).strftime('%Y-%m-%dT%H:%M:%S')
 
   for priority in range(1, 4):
+    is_historic = i < DAYS_AMOUNT/3 and random.choice([True, False])
+
+    if len(existing_values) > 0:
+      is_historic = False
+
     values.append({
       "date": date,
       "value": generateValue(DAYS_AMOUNT-i-5, DAYS_AMOUNT-i + 10),
       "priority": priority,
-      "historic": (i < DAYS_AMOUNT/3 and random.choice([True, False]))
+      "historic": is_historic
     })
 
 existing_values.extend(values)
