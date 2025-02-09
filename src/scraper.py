@@ -12,7 +12,7 @@ if len(sys.argv) > 1:
   output_dir = sys.argv[1]
 
 if len(sys.argv) > 2:
-  DAYS_AMOUNT = sys.argv[2]
+  DAYS_AMOUNT = int(sys.argv[2])
 
 if not output_dir:
   raise ValueError('No output directory provided')
