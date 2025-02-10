@@ -51,7 +51,7 @@ class LineTimeChart extends AbstractTimeChart {
       datasets.push({
         label: group,
         tension: 0.2,
-        data: super.normalizeKeys(data[group]),
+        data: super.normalizeTimeKeys(data[group]),
         borderColor: super.getRandomColor(),
         backgroundColor: 'white',
       });
@@ -61,7 +61,7 @@ class LineTimeChart extends AbstractTimeChart {
   }
 
   #draw(data) {
-    const values = super.normalizeKeys(data);
+    const values = super.normalizeTimeKeys(data);
 
     super.updateDataSet([
       {

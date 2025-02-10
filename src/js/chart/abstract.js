@@ -1,9 +1,9 @@
-class AbstractTimeChart {
+class AbstractChart {
   #dataUrl = DEFAULT_DATA_URL;
   #canvasContext;
   #chart;
   #config;
-  #filterMethod;
+  #filterMethods = [];
   #groupKey;
   #canvasId;
   #colors = [
@@ -32,15 +32,11 @@ class AbstractTimeChart {
       .then(data => {
         return data.json();
       }).then(data => {
-        data.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        if (this.#filterMethod) {
-          data = this.#filterMethod(data);
+        if (this.#filterMethods) {
+          this.#filterMethods.forEach((filterMethod) => {
+            data = filterMethod(data);
+          });
         }
-
-        let xAxisLabels = data.map((item) => item.date);
-        xAxisLabels = xAxisLabels.filter((item, index) => xAxisLabels.indexOf(item) === index);
-        this.#chart.data.labels = xAxisLabels;
 
         if (this.#groupKey) {
           data = data.reduce((_data, item) => {
@@ -67,7 +63,7 @@ class AbstractTimeChart {
     return result;
   }
 
-  normalizeKeys(data) {
+  normalizeTimeKeys(data) {
     return data.map((item) => {
       return {
         x: item.date,
@@ -81,6 +77,11 @@ class AbstractTimeChart {
     return this;
   }
 
+  updateLabels(labels) {
+    this.#chart.data.labels = labels;
+    this.#chart.update();
+  }
+
   updateDataSet(datasets) {
     this.#chart.data.datasets = datasets;
     this.#chart.update();
@@ -91,8 +92,8 @@ class AbstractTimeChart {
     return this;
   }
 
-  setFilterMethod(filterMethod) {
-    this.#filterMethod = filterMethod;
+  addFilterMethod(filterMethod) {
+    this.#filterMethods.push(filterMethod);
     return this;
   }
 
