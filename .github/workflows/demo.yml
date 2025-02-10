@@ -27,9 +27,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # Todo: Conditional check to use ADO or GHE secrets depending on the host in REPO_URL
-  REPO_URL: 'https://github.siemens.cloud/ico-zambezi/pnio_stack'
-  REPO_BRANCH: 'latest/dev/ippl_4312858_obsd_7_5_integration'
+  REPO_NAME: ${{ github.repository }}
   STAGE: ${{ github.event_name == 'pull_request' && 'dev' || 'deploy' }}
   DAYS_TO_CREATE: ${{ github.event_name == 'pull_request' && 150 || github.event.inputs.days_to_create || 1 }}
 
@@ -50,23 +48,6 @@ jobs:
       #   uses: actions/setup-go@v2
       #   with:
       #     go-version: '1.16'
-
-      - name: Clone reference repo
-        run: |
-          REPO_SUB_URL=${{ env.REPO_URL }}
-          REPO_SUB_URL=${REPO_SUB_URL#https://}
-          REPO_NAME=$(basename ${{ env.REPO_URL }} .git)
-
-          if [ -z "$REPO_NAME" ]; then
-            echo "Failed to extract repo name from: ${{ env.REPO_URL }}"
-            exit 1
-          fi
-
-          git clone --branch ${{ env.REPO_BRANCH }} https://${{ secrets.GH_TOKEN }}@$REPO_SUB_URL ${{ github.workspace }}/$REPO_NAME
-
-          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
-          ls -lah ${{ github.workspace }}/$REPO_NAME
-        shell: bash
 
       - name: Restore cache
         if: ${{ env.STAGE == 'deploy' }}
