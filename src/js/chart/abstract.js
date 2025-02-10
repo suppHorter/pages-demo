@@ -31,7 +31,8 @@ class AbstractChart {
     fetch(this.#dataUrl)
       .then(data => {
         return data.json();
-      }).then(data => {
+      })
+      .then(data => {
         if (this.#filterMethods) {
           this.#filterMethods.forEach((filterMethod) => {
             data = filterMethod(data);
@@ -50,12 +51,13 @@ class AbstractChart {
         }
 
         callback(data);
-      }).catch(error => {
+      })
+      .catch(error => {
         console.error('Error fetching the data:', error);
       });
   }
 
-  getRandomColor() {
+  getColor() {
     const result = this.#colors.pop()
     if (!result) {
       return 'rgb(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ')';

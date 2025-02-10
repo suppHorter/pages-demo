@@ -20,7 +20,6 @@ new LineTimeChart('chart-history', 'Historie')
 
 new BarChart('chart-current-prio', 'Aktuelle Prioritäten')
   .addFilterMethod((data) => {
-    // get last entries for each priority
     let lastEntries = {};
     data.forEach((d) => {
       if (!lastEntries[d.priority] || new Date(lastEntries[d.priority].date) < new Date(d.date)) {

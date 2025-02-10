@@ -52,7 +52,7 @@ class LineTimeChart extends AbstractTimeChart {
         label: group,
         tension: 0.2,
         data: super.normalizeTimeKeys(data[group]),
-        borderColor: super.getRandomColor(),
+        borderColor: super.getColor(),
         backgroundColor: 'white',
       });
     });

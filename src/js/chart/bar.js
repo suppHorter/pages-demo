@@ -1,4 +1,6 @@
 class BarChart extends AbstractChart {
+  #title;
+
   constructor(elementId, title = '') {
     super(elementId).setConfig(
       {
@@ -17,6 +19,7 @@ class BarChart extends AbstractChart {
         }
       }
     );
+    this.#title = title;
   }
 
   init() {
@@ -28,11 +31,11 @@ class BarChart extends AbstractChart {
           label: group,
           data: [data[group].value],
           borderColor: 'white',
-          backgroundColor: super.getRandomColor()
+          backgroundColor: super.getColor()
         });
       });
 
-      super.updateLabels(['Priorität']);
+      super.updateLabels(['']);
       super.updateDataSet(datasets);
     });
   }
