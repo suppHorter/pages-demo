@@ -10,14 +10,17 @@
   <script src="src/js/lib/chart.4.4.7.min.js"></script>
   <script src="src/js/lib/moment.2.30.1.min.js"></script>
   <script src="src/js/lib/chartjs-adapter-moment.1.0.1.min.js"></script>
-  <script src="src/js/time_chart/abstract.js"></script>
-  <script src="src/js/time_chart/line.js"></script>
+  <script src="src/js/chart/abstract.js"></script>
+  <script src="src/js/chart/time/abstract.js"></script>
+  <script src="src/js/chart/time/line.js"></script>
+  <script src="src/js/chart/bar.js"></script>
 </head>
 
 <body>
   <div class="container">
-    <div>
+    <div style="display: flex;">
       <canvas id="chart-prio" width="1200" height="350"></canvas>
+      <canvas id="chart-current-prio" width="350" height="350"></canvas>
     </div>
     <div>
       <canvas id="chart-history" width="1200" height="350"></canvas>

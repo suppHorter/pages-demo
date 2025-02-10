@@ -1,9 +1,9 @@
-class AbstractTimeChart {
+class AbstractChart {
   #dataUrl = DEFAULT_DATA_URL;
   #canvasContext;
   #chart;
   #config;
-  #filterMethod;
+  #filterMethods = [];
   #groupKey;
   #canvasId;
   #colors = [
@@ -31,16 +31,13 @@ class AbstractTimeChart {
     fetch(this.#dataUrl)
       .then(data => {
         return data.json();
-      }).then(data => {
-        data.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        if (this.#filterMethod) {
-          data = this.#filterMethod(data);
+      })
+      .then(data => {
+        if (this.#filterMethods) {
+          this.#filterMethods.forEach((filterMethod) => {
+            data = filterMethod(data);
+          });
         }
-
-        let xAxisLabels = data.map((item) => item.date);
-        xAxisLabels = xAxisLabels.filter((item, index) => xAxisLabels.indexOf(item) === index);
-        this.#chart.data.labels = xAxisLabels;
 
         if (this.#groupKey) {
           data = data.reduce((_data, item) => {
@@ -54,12 +51,13 @@ class AbstractTimeChart {
         }
 
         callback(data);
-      }).catch(error => {
+      })
+      .catch(error => {
         console.error('Error fetching the data:', error);
       });
   }
 
-  getRandomColor() {
+  getColor() {
     const result = this.#colors.pop()
     if (!result) {
       return 'rgb(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ')';
@@ -67,7 +65,7 @@ class AbstractTimeChart {
     return result;
   }
 
-  normalizeKeys(data) {
+  normalizeTimeKeys(data) {
     return data.map((item) => {
       return {
         x: item.date,
@@ -81,6 +79,11 @@ class AbstractTimeChart {
     return this;
   }
 
+  updateLabels(labels) {
+    this.#chart.data.labels = labels;
+    this.#chart.update();
+  }
+
   updateDataSet(datasets) {
     this.#chart.data.datasets = datasets;
     this.#chart.update();
@@ -91,8 +94,8 @@ class AbstractTimeChart {
     return this;
   }
 
-  setFilterMethod(filterMethod) {
-    this.#filterMethod = filterMethod;
+  addFilterMethod(filterMethod) {
+    this.#filterMethods.push(filterMethod);
     return this;
   }
 
