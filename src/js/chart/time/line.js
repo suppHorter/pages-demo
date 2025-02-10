@@ -21,6 +21,9 @@ class LineTimeChart extends AbstractTimeChart {
             source: 'data',
           },
           scales: {
+            y: {
+              beginAtZero: true,
+            },
             x: {
               type: 'time',
               time: {

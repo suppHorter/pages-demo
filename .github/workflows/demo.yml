@@ -1,0 +1,120 @@
+name: (Demo) Pages CI / CD
+
+on:
+  # add this in the final workflow
+  # schedule:
+  #   - cron: '0 0 * * *'
+
+  pull_request:
+    branches:
+      - main
+
+  # delete this in the final workflow
+  workflow_dispatch:
+    inputs:
+      days_to_create:
+        default: '1'
+        description: 'Number of days to create'
+        required: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+env:
+  # Todo: Conditional check to use ADO or GHE secrets depending on the host in REPO_URL
+  REPO_URL: 'https://github.siemens.cloud/ico-zambezi/pnio_stack'
+  REPO_BRANCH: 'latest/dev/ippl_4312858_obsd_7_5_integration'
+  STAGE: ${{ github.event_name == 'pull_request' && 'dev' || 'deploy' }}
+  DAYS_TO_CREATE: ${{ github.event_name == 'pull_request' && 150 || github.event.inputs.days_to_create || 1 }}
+
+jobs:
+  demo-prepare-pages:
+    name: '📦 Prepare Pages'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # - name: Setup Go
+      #   uses: actions/setup-go@v2
+      #   with:
+      #     go-version: '1.16'
+
+      - name: Clone reference repo
+        run: |
+          REPO_SUB_URL=${{ env.REPO_URL }}
+          REPO_SUB_URL=${REPO_SUB_URL#https://}
+          REPO_NAME=$(basename ${{ env.REPO_URL }} .git)
+
+          if [ -z "$REPO_NAME" ]; then
+            echo "Failed to extract repo name from: ${{ env.REPO_URL }}"
+            exit 1
+          fi
+
+          git clone --branch ${{ env.REPO_BRANCH }} https://${{ secrets.GH_TOKEN }}@$REPO_SUB_URL ${{ github.workspace }}/$REPO_NAME
+
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+          ls -lah ${{ github.workspace }}/$REPO_NAME
+        shell: bash
+
+      - name: Restore cache
+        if: ${{ env.STAGE == 'deploy' }}
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/data
+          key: data-${{ env.REPO_NAME }}
+
+      - name: Create Random Data
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          AMOUNT='${{ env.DAYS_TO_CREATE }}'
+
+          if [ ! -f "data/output.json"]; then
+            # when cache is deleted we want some more history
+            AMOUNT=150
+          fi
+
+          python3 src/simulate.py ${{ github.workspace }}/data $AMOUNT
+        shell: bash
+
+      - name: cleanup artifact
+        run: |
+          set +e
+          rm -rf ${{ github.workspace }}/venv
+          rm -rf ${{ github.workspace }}/.devcontainer
+          rm -rf ${{ github.workspace }}/${{ env.REPO_NAME }}
+          set -e
+        shell: bash
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+
+  demo-deploy-pages:
+    name: '🚛 Deploy Pages'
+    if: github.event_name != 'pull_request'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: demo-prepare-pages
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

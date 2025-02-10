@@ -41,12 +41,17 @@ class AbstractChart {
 
         if (this.#groupKey) {
           data = data.reduce((_data, item) => {
-            const key = item[this.#groupKey];
+            const key = `${this.#groupKey} ${item[this.#groupKey]}`;
             if (!_data[key]) {
               _data[key] = [];
             }
             _data[key].push(item);
             return _data;
+          }, {});
+          // Sort the data by key to make sure the order is consistent
+          data = Object.keys(data).sort().reduce((acc, key) => {
+            acc[key] = data[key];
+            return acc;
           }, {});
         }
 
@@ -57,12 +62,14 @@ class AbstractChart {
       });
   }
 
-  getColor() {
-    const result = this.#colors.pop()
-    if (!result) {
-      return 'rgb(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ')';
-    }
-    return result;
+  addFilterMethod(filterMethod) {
+    this.#filterMethods.push(filterMethod);
+    return this;
+  }
+
+  groupBy(key) {
+    this.#groupKey = key;
+    return this;
   }
 
   normalizeTimeKeys(data) {
@@ -74,10 +81,42 @@ class AbstractChart {
     });
   }
 
+  // get methods
+
+  getColor() {
+    const result = this.#colors.pop()
+    if (!result) {
+      return 'rgb(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ')';
+    }
+    return result;
+  }
+
+  getGroupKey() {
+    return this.#groupKey;
+  }
+
+  // set methods
+
+  setColors(colors) {
+    if (Array.isArray(colors)) {
+      this.#colors = colors;
+      return this;
+    }
+    this.#colors = [colors];
+    return this;
+  }
+
   setConfig(config) {
     this.#config = config;
     return this;
   }
+
+  setDataPath(dataUrl) {
+    this.#dataUrl = dataUrl;
+    return this;
+  }
+
+  // chart update methods
 
   updateLabels(labels) {
     this.#chart.data.labels = labels;
@@ -87,29 +126,5 @@ class AbstractChart {
   updateDataSet(datasets) {
     this.#chart.data.datasets = datasets;
     this.#chart.update();
-  }
-
-  setDataPath(dataUrl) {
-    this.#dataUrl = dataUrl;
-    return this;
-  }
-
-  addFilterMethod(filterMethod) {
-    this.#filterMethods.push(filterMethod);
-    return this;
-  }
-
-  setConfig(config) {
-    this.#config = config;
-    return this;
-  }
-
-  getGroupKey() {
-    return this.#groupKey;
-  }
-
-  groupBy(key) {
-    this.#groupKey = key;
-    return this;
   }
 }

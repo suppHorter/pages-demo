@@ -1,7 +1,7 @@
 const DEFAULT_DATA_URL = 'data/output.json';
 
 
-new LineTimeChart('chart-prio', 'Prioritäten über Zeit')
+new LineTimeChart('chart-prio', 'improvements over time')
   .addFilterMethod((data) => {
     data = data.filter((d) => d.historic === false);
     return data;
@@ -10,7 +10,7 @@ new LineTimeChart('chart-prio', 'Prioritäten über Zeit')
   .init();
 
 
-new LineTimeChart('chart-history', 'Historie')
+new LineTimeChart('chart-history', 'history')
   .addFilterMethod((data) => {
     data = data.filter((d) => d.historic === true);
     return data;
@@ -18,15 +18,15 @@ new LineTimeChart('chart-history', 'Historie')
   .groupBy('priority')
   .init();
 
-new BarChart('chart-current-prio', 'Aktuelle Prioritäten')
+
+new BarChart('chart-current-prio', 'improvements left')
   .addFilterMethod((data) => {
     let lastEntries = {};
     data.forEach((d) => {
       if (!lastEntries[d.priority] || new Date(lastEntries[d.priority].date) < new Date(d.date)) {
-        lastEntries[d.priority] = d;
+        lastEntries[`priority ${d.priority}`] = d;
       }
     });
     return lastEntries;
   })
   .init();
-

@@ -14,16 +14,32 @@
   <script src="src/js/chart/time/abstract.js"></script>
   <script src="src/js/chart/time/line.js"></script>
   <script src="src/js/chart/bar.js"></script>
+  <style
+    type="text/css">
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    canvas {
+      margin: 10px;
+      padding: 10px;
+      box-shadow: 5px 5px 10px lightgrey;
+      border: 1px solid grey;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 
 <body>
   <div class="container">
-    <div style="display: flex;">
-      <canvas id="chart-prio" width="1200" height="350"></canvas>
-      <canvas id="chart-current-prio" width="350" height="350"></canvas>
-    </div>
     <div>
-      <canvas id="chart-history" width="1200" height="350"></canvas>
+      <canvas id="chart-prio" width="1325" height="325"></canvas>
+    </div>
+    <div style="display: flex;">
+      <canvas id="chart-history" width="1000" height="325"></canvas>
+      <canvas id="chart-current-prio" width="325" height="325"></canvas>
     </div>
   </div>
 </body>
